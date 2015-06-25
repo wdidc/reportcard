@@ -1,0 +1,13 @@
+body {
+  text-align: center;
+  font-size: 18px;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+ul {
+  margin: 0 auto;
+  list-style-type: none;
+}

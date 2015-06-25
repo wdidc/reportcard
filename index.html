@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <a href="#">Log in with GitHub</a>
+  <h1>Report Card</h1>
+  <h2>ATTENDANCE</h2>
+  <h3>RULES</h3>
+  <ul>
+    <li>Maximum: 4 Absences</li>
+    <li>4 Tardies = 1 Absence</li>
+  </ul>
+  <p>Tardy: <span id="num-tardy"></span></p>
+  <p>Absent: <span id="num-absent"></span></p>
+
+  <h2>ASSIGNMENTS</h2>
+
+  <script src="http://jshawl.com/jq"></script>
+  <script>
+    var accessToken;
+    $("a").on( "click", function(e){
+      e.preventDefault();
+      window.open( "http://auth.wdidc.org" );
+    })
+    window.addEventListener( "message", function(e){
+      e.preventDefault();
+      accessToken = e.data;
+      getUser( accessToken );
+    })
+
+    function getUser( token ){
+      $.getJSON( "https://api.github.com/user?access_token=" + token, function( response ){
+        // console.log( response );
+        response.access_token = token;
+        localStorage.setItem( "currentUser", JSON.stringify(response) );
+      })
+    }
+
+    var currentUser = JSON.parse( localStorage.getItem( "currentUser" ) );
+    if (currentUser) {
+      // Attendance
+      var urlAttendance = "http://api.wdidc.org/attendance/students/" + currentUser.id + "?callback=?";
+      $.getJSON( urlAttendance, function( response ){
+        // console.log( response );
+        var tardyCount = 0,
+            absentCount = 0;
+        for( var i=0; i < response.length; i++ ){
+          switch( response[i].status ){
+              case "tardy":
+                tardyCount++;
+                break;
+              case "absent":
+                absentCount++;
+                break;
+              default:
+                console.log( "No attendance status logged" );
+                break;
+          }
+        }
+        $( "#num-tardy" ).html( tardyCount );
+        $( "#num-absent" ).html( absentCount );
+      });
+
+      // Homework
+
+      var urlAssignments = "http://api.wdidc.org/assignments/";
+
+      $.getJSON( urlAssignments, function( response ){
+        console.log( response );
+        for( var i=0; i < response.length; i++ ){
+          // console.log( response[i] );
+          var assignment = response[i];
+          $.getJSON( urlAssignments + assignment.weekday + "/submissions", function( submissions ){
+            for( var j=0; j < submissions.length; j++ ){
+              if( submissions[j].github_id === currentUser.id ){
+                console.log( currentUser.name + " completed the assignment for " + assignment.weekday );
+                return;
+              }
+            }
+            console.log( currentUser.name + " did not complete the assignment for " + assignment.weekday );
+          })
+        }
+      });
+    }
+
+  </script>
+</body>
+</html>
