@@ -27,11 +27,11 @@
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script>
     var accessToken;
-    $("a").on( "click", function(e){
+    $( "a" ).on( "click", function( e ){
       e.preventDefault();
       window.open( "http://auth.wdidc.org" );
     })
-    window.addEventListener( "message", function(e){
+    window.addEventListener( "message", function( e ){
       e.preventDefault();
       accessToken = e.data;
       getUser( accessToken );
