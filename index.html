@@ -18,8 +18,13 @@
   <p>Absent: <span id="num-absent"></span></p>
 
   <h2>ASSIGNMENTS</h2>
+  <p>Complete: <span id="percent-complete"></span></p>
+  <p>Incomplete: <span id="percent-incomplete"></span></p>
+  <span>Missing Assignments</span>
+  <ol id="list-incomplete">
+  </ol>
 
-  <script src="http://jshawl.com/jq"></script>
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script>
     var accessToken;
     $("a").on( "click", function(e){
@@ -34,18 +39,17 @@
 
     function getUser( token ){
       $.getJSON( "https://api.github.com/user?access_token=" + token, function( response ){
-        // console.log( response );
         response.access_token = token;
         localStorage.setItem( "currentUser", JSON.stringify(response) );
       })
     }
 
     var currentUser = JSON.parse( localStorage.getItem( "currentUser" ) );
+    console.log( currentUser );
     if (currentUser) {
       // Attendance
       var urlAttendance = "http://api.wdidc.org/attendance/students/" + currentUser.id + "?callback=?";
       $.getJSON( urlAttendance, function( response ){
-        // console.log( response );
         var tardyCount = 0,
             absentCount = 0;
         for( var i=0; i < response.length; i++ ){
@@ -63,30 +67,36 @@
         }
         $( "#num-tardy" ).html( tardyCount );
         $( "#num-absent" ).html( absentCount );
+      }).fail(function( error ){
+        console.log( "Attendance JSON call failed" );
       });
 
       // Homework
-
-      var urlAssignments = "http://api.wdidc.org/assignments/";
+      var urlAssignments = "http://api.wdidc.org/assignments/students/" + currentUser.id;
 
       $.getJSON( urlAssignments, function( response ){
-        console.log( response );
+        var totalCount = 0,
+            completeCount = 0,
+            incompleteCount = 0;
+        // Loops through each assignment
         for( var i=0; i < response.length; i++ ){
-          // console.log( response[i] );
+          totalCount++;
           var assignment = response[i];
-          $.getJSON( urlAssignments + assignment.weekday + "/submissions", function( submissions ){
-            for( var j=0; j < submissions.length; j++ ){
-              if( submissions[j].github_id === currentUser.id ){
-                console.log( currentUser.name + " completed the assignment for " + assignment.weekday );
-                return;
-              }
-            }
-            console.log( currentUser.name + " did not complete the assignment for " + assignment.weekday );
-          })
+          console.log( assignment );
+          if( assignment.status === "complete" ){
+            completeCount++;
+          } else {
+            incompleteCount++;
+            var incompleteAssignment = $( "<li></li>" ).html( assignment.assignment_title );
+            $( "#list-incomplete" ).append( incompleteAssignment );
+          }
         }
+        percentComplete = ( completeCount / totalCount ) * 100;
+        $( "#percent-complete" ).html( percentComplete + "%" );
+        percentIncomplete = ( incompleteCount / totalCount ) * 100;
+        $( "#percent-incomplete" ).html( percentIncomplete + "%" );
       });
     }
-
   </script>
 </body>
 </html>
