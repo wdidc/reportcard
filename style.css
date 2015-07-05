@@ -1,5 +1,9 @@
 body {
   font-size: 18px;
+  max-width:40em;
+  margin:auto;
+  padding:2em;
+  font-family:"Helvetica Neue", sans-serif;
 }
 
 h1 {
