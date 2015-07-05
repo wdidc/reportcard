@@ -10,3 +10,7 @@ ul {
   margin: 0 auto;
   list-style-type: none;
 }
+
+.showIfCurrentUser{
+  display:none;
+}
