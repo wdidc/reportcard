@@ -61,19 +61,21 @@ function init(){
 	  incompleteCount = 0;
       // Loops through each assignment
       for( var i=0; i < response.length; i++ ){
-	totalCount++;
 	var assignment = response[i];
-	if( assignment.status === "complete" ){
-	  completeCount++;
-	} else {
-	  incompleteCount++;
-	  var incompleteAssignment = $( "<li></li>" ).html( assignment.assignment_title );
-	  $( "#list-incomplete" ).append( incompleteAssignment );
-	}
+	if(assignment.assignment_type == "homework"){
+	  totalCount++;
+	  if( assignment.status === "complete"){
+	    completeCount++;
+	  } else {
+	    incompleteCount++;
+	    var incompleteAssignment = $( "<li></li>" ).html( assignment.assignment_title );
+	    $( "#list-incomplete" ).append( incompleteAssignment );
+	  }
+	}//if homework
       }
-      percentComplete = ( completeCount / totalCount ) * 100;
+      percentComplete = parseFloat(( completeCount / totalCount ) * 100).toFixed(2);
       $( "#percent-complete" ).html( percentComplete + "%" );
-      percentIncomplete = ( incompleteCount / totalCount ) * 100;
+      percentIncomplete = parseFloat( (incompleteCount / totalCount ) * 100).toFixed(2);
       $( "#percent-incomplete" ).html( percentIncomplete + "%" );
     });
   } else {
@@ -82,3 +84,4 @@ function init(){
   }
 }
 init()
+
