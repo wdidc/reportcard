@@ -68,7 +68,7 @@ function init(){
 	    completeCount++;
 	  } else {
 	    incompleteCount++;
-	    var incompleteAssignment = $( "<li></li>" ).html( assignment.assignment_title );
+	    var incompleteAssignment = $( "<li></li>" ).html( "<a href='"+assignment.assignment_repo_url+"'>"+assignment.assignment_title+"</a>" );
 	    $( "#list-incomplete" ).append( incompleteAssignment );
 	  }
 	}//if homework
