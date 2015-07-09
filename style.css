@@ -18,3 +18,10 @@ ul {
 .showIfCurrentUser{
   display:none;
 }
+
+.callout{
+  border:2px solid #ccc;
+  border-radius: 3px;
+  padding:0 1em;
+}
+
