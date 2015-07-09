@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Report Card</title>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" content="width=device-width">
 </head>
 <body>
   <a href="https://github.com/wdidc/reportcard"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
@@ -13,13 +14,16 @@
     <h2>Attendance</h2>
     <p>More than 4 absences <em>or</em> 8 tardies disqualifies you for Outcomes support. <a href='https://github.com/ga-dc/pbj/tree/master/01-front-end-fundamentals/intro-to-wdi#to-qualify-for-outcomes'>Read More.</a></p>
 
-    <div class='callout'>
+    <div class='attendance-graph callout'>
       <p><span id="num-tardy"></span> tardies.  <span id="num-absent"></span> absences.</p>
     </div>
 
     <h2>Assignments</h2>
-    <p>Complete: <span id="percent-complete"></span></p>
-    <p>Incomplete: <span id="percent-incomplete"></span></p>
+    <div class="assignment-graph callout">
+      <div class="percent-complete">
+
+      </div>
+    </div>
     <span>Missing Assignments</span>
     <ol id="list-incomplete">
     </ol>

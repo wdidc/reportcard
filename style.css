@@ -23,5 +23,22 @@ ul {
   border:2px solid #ccc;
   border-radius: 3px;
   padding:0 1em;
+  font-weight: bold;
 }
 
+.red {
+  background: #ff3f2c;
+  color: white;
+  font-weight: bold;
+}
+
+.assignment-graph {
+  margin-bottom: 1em;
+  padding-left: 0;
+}
+
+.percent-complete {
+  padding: 1em;
+  background: green;
+  color: white;
+}

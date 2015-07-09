@@ -34,20 +34,23 @@ function init(){
       var tardyCount = 0,
 	  absentCount = 0;
       for( var i=0; i < response.length; i++ ){
-	switch( response[i].status ){
-	    case "tardy":
-	      tardyCount++;
-	      break;
-	    case "absent":
-	      absentCount++;
-	      break;
-	    default:
-	      console.log( "No attendance status logged" );
-	      break;
-	}
+      	switch( response[i].status ){
+      	    case "tardy":
+      	      tardyCount++;
+      	      break;
+      	    case "absent":
+      	      absentCount++;
+      	      break;
+      	    default:
+      	      console.log( "No attendance status logged" );
+      	      break;
+      	}
       }
       $( "#num-tardy" ).html( tardyCount );
       $( "#num-absent" ).html( absentCount );
+      if( tardyCount + (absentCount * 2) >= 8 ){
+        $( ".attendance-graph" ).addClass( "red" );
+      }
     }).fail(function( error ){
       console.log( "Attendance JSON call failed" );
     });
@@ -74,7 +77,14 @@ function init(){
 	}//if homework
       }
       percentComplete = parseFloat(( completeCount / totalCount ) * 100).toFixed(2);
-      $( "#percent-complete" ).html( percentComplete + "%" );
+      if( percentComplete < 80 ){
+        $( ".percent-complete" ).css( "background-color", "#ff3f2c" );
+      }
+      else{
+        $( ".percent-complete" ).css( "background-color", "#1fce35" );
+      }
+      $( ".percent-complete" ).css( "width", percentComplete + "%" );
+      $( ".percent-complete" ).html( percentComplete + "% complete" );
       percentIncomplete = parseFloat( (incompleteCount / totalCount ) * 100).toFixed(2);
       $( "#percent-incomplete" ).html( percentIncomplete + "%" );
     });
