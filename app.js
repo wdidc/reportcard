@@ -85,3 +85,9 @@ function init(){
 }
 init()
 
+function test(id){
+  var u = JSON.parse(localStorage.getItem("currentUser"))
+  u.id = id
+  localStorage.setItem("currentUser", JSON.stringify(u))
+  init()
+}
