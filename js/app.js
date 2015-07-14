@@ -79,7 +79,7 @@ function init(){
 	  var project = $("<div class='js-project'></div>")
           project.append("<h3>"+assignment.assignment_title+"</h3>")
           if(assignment.status){
-	    project.append("<div>"+assignment.status+"</div>")
+	    project.append("<div>"+markdown.toHTML(assignment.status)+"</div>")
 	    $(".js-projects").append(project)
 	  }
 	  }
