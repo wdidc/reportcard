@@ -1,3 +1,7 @@
+*{
+  box-sizing: border-box;
+}
+
 body {
   font-size: 18px;
   max-width:40em;
@@ -12,7 +16,6 @@ h1 {
 
 ul {
   margin: 0 auto;
-  list-style-type: none;
 }
 
 .showIfCurrentUser{
@@ -36,9 +39,31 @@ ul {
   margin-bottom: 1em;
   padding-left: 0;
 }
+.assignment-graph{
+   padding:0;
+}
 
 .percent-complete {
   padding: 1em;
   background: green;
   color: white;
+}
+
+.project{
+  border:2px solid #ccc;
+  padding:1em;
+  border-radius:3px;
+}
+
+.project h3{
+  border-bottom:2px solid #ccc;
+  margin-bottom:1em;
+  padding-bottom:.75em;
+}
+
+.project :first-child{
+  margin-top:0;
+}
+.project :last-child{
+  margin-bottom:0;
 }

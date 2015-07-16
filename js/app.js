@@ -76,7 +76,7 @@ function init(){
 	  }
 	}//if homework
 	if(assignment.assignment_type == "project"){
-	  var project = $("<div class='js-project'></div>")
+	  var project = $("<div class='project js-project'></div>")
           project.append("<h3>"+assignment.assignment_title+"</h3>")
           if(assignment.status){
 	    project.append("<div>"+markdown.toHTML(assignment.status)+"</div>")
