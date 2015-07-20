@@ -67,3 +67,21 @@ ul {
 .project :last-child{
   margin-bottom:0;
 }
+
+.cf:after{
+  content: ' ';
+  display:table;
+  clear:both;
+}
+
+.tardies, .absences{
+  float:left;
+  width:50%;
+}
+
+@media all and (max-width:40em){
+  .tardies, .absences{
+    float:none;
+    width: 100%;
+  }
+}

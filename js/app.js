@@ -31,24 +31,38 @@ function init(){
     $(".showIfCurrentUser").show()
     var urlAttendance = "http://api.wdidc.org/attendance/students/" + currentUser.id + "?callback=?";
     $.getJSON( urlAttendance, function( response ){
-      var tardyCount = 0,
-	  absentCount = 0;
+      var tardyCount = [],
+	  absentCount = [];
       for( var i=0; i < response.length; i++ ){
       	switch( response[i].status ){
       	    case "tardy":
-      	      tardyCount++;
+      	      tardyCount.push(response[i].weekday);
       	      break;
       	    case "absent":
-      	      absentCount++;
+      	      absentCount.push(response[i].weekday);
       	      break;
       	    default:
       	      console.log( "No attendance status logged" );
       	      break;
       	}
       }
-      $( "#num-tardy" ).html( tardyCount );
-      $( "#num-absent" ).html( absentCount );
-      if( tardyCount + (absentCount * 2) >= 8 ){
+      if(tardyCount.length){
+	$(".tardies").append("<h3>Tardies</h3>")
+        var ts = tardyCount.map(function(tardy){
+          return moment(tardy,"YYYY-MM-DD").format("MMMM Do")	
+	})
+	$(".tardies").append("<small>" + ts.join(", ") + "</small>")
+      }
+      if(absentCount.length){
+	$(".absences").append("<h3>Absences</h3>")
+        var as = absentCount.map(function(tardy){
+          return moment(tardy,"YYYY-MM-DD").format("MMMM Do")	
+	})
+	$(".absences").append("<small>" + as.join(", ")+"</small>")
+      }
+      $( "#num-tardy" ).html( tardyCount.length );
+      $( "#num-absent" ).html( absentCount.length );
+      if( tardyCount.length + (absentCount.length * 2) >= 8 ){
         $( ".attendance-graph" ).addClass( "red" );
       }
     }).fail(function( error ){
