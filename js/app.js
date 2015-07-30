@@ -70,7 +70,7 @@ function init(){
     });
 
     // Homework
-    var urlAssignments = "http://assignments.wdidc.org/students/" + currentUser.id + "/submissions?access_token=" + currentUser.access_token ;
+    var urlAssignments = "http://assignments.wdidc.org/students/" + currentUser.id + "/submissions.json?access_token=" + currentUser.access_token ;
      
 
     $.getJSON( urlAssignments, function( response ){
