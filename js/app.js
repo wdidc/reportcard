@@ -30,92 +30,81 @@ function init(){
     $(".js-login").html("logout "+ currentUser.login)
     $(".showIfCurrentUser").show()
     var urlAttendance = "http://api.wdidc.org/attendance/students/" + currentUser.id + "?callback=?";
-    $.getJSON( urlAttendance, function( response ){
-      var tardyCount = [],
-	  absentCount = [];
-      for( var i=0; i < response.length; i++ ){
-      	switch( response[i].status ){
-      	    case "tardy":
-      	      tardyCount.push(response[i].weekday);
-      	      break;
-      	    case "absent":
-      	      absentCount.push(response[i].weekday);
-      	      break;
-      	    default:
-      	      console.log( "No attendance status logged" );
-      	      break;
-      	}
-      }
-      if(tardyCount.length){
-	$(".tardies").append("<h3>Tardies</h3>")
-        var ts = tardyCount.map(function(tardy){
-          return moment(tardy,"YYYY-MM-DD").format("MMMM Do")	
-	})
-	$(".tardies").append("<small>" + ts.join(", ") + "</small>")
-      }
-      if(absentCount.length){
-	$(".absences").append("<h3>Absences</h3>")
-        var as = absentCount.map(function(tardy){
-          return moment(tardy,"YYYY-MM-DD").format("MMMM Do")	
-	})
-	$(".absences").append("<small>" + as.join(", ")+"</small>")
-      }
-      $( "#num-tardy" ).html( tardyCount.length );
-      $( "#num-absent" ).html( absentCount.length );
-      if( tardyCount.length + (absentCount.length * 2) >= 8 ){
+    var urlAttendanceSummary = "http://api.wdidc.org/attendance/summary/" + currentUser.id;
+    $.ajax({
+      url: urlAttendanceSummary,
+      dataType: "jsonp",
+      type: "GET",
+      jsonpCallback: "callback"
+    }).done( function( response ){
+      $(".tardies").append("<h3>Tardies</h3>")
+    	$(".absences").append("<h3>Absences</h3>")
+      $( "#num-tardy" ).html( response.tardy );
+      $( "#num-absent" ).html( response.absent );
+      if( response.tardy + (response.absent * 2) >= 8 ){
         $( ".attendance-graph" ).addClass( "red" );
       }
-    }).fail(function( error ){
-      console.log( "Attendance JSON call failed" );
-    });
+    }).done( function( response ){
+      $.getJSON( urlAttendance, function( response ){
+        console.log( response )
+        for( var i=0; i<response.length; i++){
+          if(response[i].status === "tardy"){
+            $(".tardies").append("<p><small>" + moment(response[i].weekday,"YYYY-MM-DD").format("MMMM Do") + "</small></p>")
+          }
+          if(response[i].status === "absent"){
+
+
+          	$(".absences").append("<p><small>" + moment(response[i].weekday,"YYYY-MM-DD").format("MMMM Do") + "</small></p>")
+          }
+        }
+      })
+    })
 
     // Homework
     var urlAssignments = "http://assignments.wdidc.org/students/" + currentUser.id + "/submissions.json?access_token=" + currentUser.access_token ;
-     
+    var urlAssignmentsSummary = "http://assignments.wdidc.org/students/" + currentUser.id + "/summary?access_token=" + currentUser.access_token ;
 
     $.getJSON( urlAssignments, function( response ){
-      var totalCount = 0,
-	  completeCount = 0,
-	  incompleteCount = 0;
       // Loops through each assignment
       for( var i=0; i < response.length; i++ ){
-	var assignment = response[i];
-	if(assignment.assignment_type == "homework"){
-	  totalCount++;
-	  if( assignment.status === "complete"){
-	    completeCount++;
-	  } else {
-	    incompleteCount++;
-	    var incompleteAssignment = $( "<li></li>" ).html( "<a href='"+assignment.assignment_repo_url+"'>"+assignment.assignment_title+"</a>" );
-	    $( "#list-incomplete" ).append( incompleteAssignment );
-	  }
-	}//if homework
-	if(assignment.assignment_type == "project"){
-	  var project = $("<div class='project js-project'></div>")
-          project.append("<h3>"+assignment.assignment_title+"</h3>")
-          if(assignment.status){
-	    project.append("<div>"+markdown.toHTML(assignment.status)+"</div>")
-	    $(".js-projects").append(project)
-	  }
-	  }
-	}
-      percentComplete = parseFloat(( completeCount / totalCount ) * 100).toFixed(2);
-      if( percentComplete < 80 ){
-        $( ".percent-complete" ).css( "background-color", "#ff3f2c" );
-      }
-      else{
-        $( ".percent-complete" ).css( "background-color", "#1fce35" );
-      }
-      $( ".percent-complete" ).css( "width", percentComplete + "%" );
-      $( ".percent-complete" ).html( percentComplete + "% complete" );
-      percentIncomplete = parseFloat( (incompleteCount / totalCount ) * 100).toFixed(2);
-      $( "#percent-incomplete" ).html( percentIncomplete + "%" );
-    });
-  } else {
-    $(".js-login").html("Log In with GitHub")
-    $(".showIfCurrentUser").hide()
-  }
+	       var assignment = response[i];
+         if(assignment.assignment_type == "homework"){
+        	  if( !assignment.status ){
+        	    var incompleteAssignment = $( "<li></li>" ).html( "<a href='"+assignment.assignment_repo_url+"'>"+assignment.assignment_title+"</a>" );
+        	    $( "#list-incomplete" ).append( incompleteAssignment );
+        	  }
+        	}//if homework
+         if(assignment.assignment_type == "project"){
+        	  var project = $("<div class='project js-project'></div>")
+            project.append("<h3>"+assignment.assignment_title+"</h3>")
+            if(assignment.status){
+        	    project.append("<div>"+markdown.toHTML(assignment.status)+"</div>")
+        	    $(".js-projects").append(project)
+        	  }
+        	}
+        }
+      });
+
+      $.getJSON( urlAssignmentsSummary, function( response ){
+        percentComplete = response.percent_complete;
+        if( percentComplete < 80 ){
+          $( ".percent-complete" ).css( "background-color", "#ff3f2c" );
+        }
+        else{
+          $( ".percent-complete" ).css( "background-color", "#1fce35" );
+        }
+        $( ".percent-complete" ).css( "width", percentComplete + "%" );
+        $( ".percent-complete" ).html( percentComplete + "% complete" );
+        percentIncomplete = 100 - percentComplete;
+        $( "#percent-incomplete" ).html( percentIncomplete + "%" );
+      });
+
+    } else {
+      $(".js-login").html("Log In with GitHub")
+      $(".showIfCurrentUser").hide()
+    }
 }
+
 init()
 
 function test(id){
